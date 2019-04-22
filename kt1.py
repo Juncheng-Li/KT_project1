@@ -1,12 +1,13 @@
-import fuzzy
-
+import pyphonetics as pyp
+import weighted_levenshtein as ed
+import numpy as np
 
 def data_loading():
     f = open("./data/correct.txt", "r")
     f1 = f.readlines()
     f.close()
 
-    f = open("./data/misspell.txt", "r")
+    f = open("./data/fake_mis.txt", "r")
     f2 = f.readlines()
     f.close()
 
@@ -24,21 +25,7 @@ def write_corrected(temp):
 
 # A simplified Neighborhood search that only works for 4 digit soundex
 # Return a similar word in dict
-def simplified_NS(dict_soundex, misspell_soundex):
-    if misspell_soundex in dict_soundex:
-        i = dict_soundex.index(misspell_soundex)
-    else:
-        for code in dict_soundex:
-            count = 0
-            highest = 0
-            highest_code = "None\n"
-            for j in range(0, 3):
-                if code[j] == misspell_soundex[j]:
-                    count = count + 1
-            if count > highest:
-                highest = count
-                highest_code = code
-        return highest_code
+
 
 
 
@@ -47,16 +34,17 @@ def simplified_NS(dict_soundex, misspell_soundex):
 correct, misspell, dic = data_loading()
 
 # Soundex test
-soundex = fuzzy.Soundex(4)
-dict_soundex = []
-for element in dic:
-    dict_soundex.append(soundex(element))
-print(dict_soundex[1])
-
-soundex = fuzzy.Soundex(4)
-misspell_soundex = soundex('a')
-print(misspell_soundex)
-print(simplified_NS(dict_soundex, misspell_soundex))
+soundex = pyp.Soundex()
+print(soundex.phonetics('rubert'))
+print(soundex.phonetics('ruportkan'))
+print('----------------------------')
+for element in misspell:
+    print(soundex.phonetics(element))
+print('----------------------------')
+for i in range(0, len(misspell)):
+    print(soundex.phonetics(misspell[i]))
+print('----------------------------')
+print(soundex.distance('rubert', 'ruportd'))
 
 
 '''

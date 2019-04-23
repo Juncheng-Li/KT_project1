@@ -2,16 +2,9 @@ import weighted_levenshtein as ed
 import numpy as np
 import time
 
-# print(time.localtime())
 
-insert_costs = np.ones(128, dtype=np.float64)
-delete_costs = np.ones(128, dtype=np.float64)
-substitute_costs = np.ones((128, 128), dtype=np.float64)
-
-
-def neighborhood_search(word1, word2):
-    return ed.levenshtein(word1, word2, insert_costs=insert_costs, delete_costs=delete_costs,
-                          substitute_costs=substitute_costs)
+def edit_distance(word1, word2):
+    return ed.levenshtein(word1, word2)
 
 
 def data_loading():
@@ -30,7 +23,7 @@ def data_loading():
 
 
 def write_corrected(correct, misspell, temp, evaluation):
-    f = open("./data/NS.txt", "w+")
+    f = open("./data/ED.txt", "w+")
     for a in range(0, len(temp)):
         # f.write(misspell[a].rstrip() + ', ')
         # f.write(correct[a].rstrip() + ' ->[ ')
@@ -45,7 +38,7 @@ def write_corrected(correct, misspell, temp, evaluation):
 
 
 def write_corrected_verbose(correct, misspell, temp, evaluation):
-    f = open("./data/NS_verbose.txt", "w+")
+    f = open("./data/ED_verbose.txt", "w+")
     for a in range(0, len(temp)):
         f.write(misspell[a].rstrip() + ', ')
         f.write(correct[a].rstrip() + ' ->[ ')
@@ -104,7 +97,7 @@ for i in range(0, len(misspell)):
         best_matches.append([misspell[i]])
     else:
         for d in dic:
-            value = neighborhood_search(misspell[i], d)
+            value = edit_distance(misspell[i], d)
             score.append(value)
         best = min(score)
         indices = [i for i, val in enumerate(score) if val == best]

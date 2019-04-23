@@ -1,13 +1,21 @@
-import pyphonetics as pyp
+import jellyfish
 import weighted_levenshtein as ed
 import numpy as np
+import time
+
+
+def soundex_distance(word1, word2):
+    soundex1 = jellyfish.soundex(word1)
+    soundex2 = jellyfish.soundex(word2)
+    return ed.levenshtein(soundex1, soundex2)
+
 
 def data_loading():
     f = open("./data/correct.txt", "r")
     f1 = f.readlines()
     f.close()
 
-    f = open("./data/fake_mis.txt", "r")
+    f = open("./data/misspell.txt", "r")
     f2 = f.readlines()
     f.close()
 
@@ -17,48 +25,99 @@ def data_loading():
     return f1, f2, f3
 
 
-def write_corrected(temp):
-    f = open("./data/soundex_corrected.txt", "w+")
-    for element in temp:
-        f.write(element)
+def write_corrected(correct, misspell, temp, evaluation):
+    f = open("./data/Soundex.txt", "w+")
+    for a in range(0, len(temp)):
+        # f.write(misspell[a].rstrip() + ', ')
+        # f.write(correct[a].rstrip() + ' ->[ ')
+        temp_list = temp[a]
+        for c in temp_list:
+            f.write(c.rstrip() + ' ')
+        f.write('\n')
+    # f.write('Predict p and r, Detection p and r: ')
+    # f.write(str(evaluation[0]) + ' ')
+    # f.write(str(evaluation[1]))
     f.close()
 
-# A simplified Neighborhood search that only works for 4 digit soundex
-# Return a similar word in dict
+
+def write_corrected_verbose(correct, misspell, temp, evaluation):
+    f = open("./data/Soundex_verbose.txt", "w+")
+    for a in range(0, len(temp)):
+        f.write(misspell[a].rstrip() + ', ')
+        f.write(correct[a].rstrip() + ' ->[ ')
+        temp_list = temp[a]
+        for c in temp_list:
+            f.write(c.rstrip() + ' ')
+        f.write(']\n')
+    f.write('Predict p and r, Detection p and r: ')
+    f.write(str(evaluation[0]) + ' ')
+    f.write(str(evaluation[1]))
+    f.close()
 
 
+def predict_evaluation(correct, best_matches):
+    tp = 0
+    tp_n_fp = 0
+    for i in range(0, len(best_matches)):
+        if correct[i] in best_matches[i]:
+            tp += 1
+        tp_n_fp += len(best_matches[i])
+    precision = tp / tp_n_fp
+    tp_n_fn = len(best_matches)
+    recall = tp / tp_n_fn
+    return precision, recall, tp, tp_n_fp, tp_n_fn
 
+
+def detect_evaluation(correct, misspell, best_matches):
+    tp = 0
+    fn = 0
+    tn = 0
+    fp = 0
+    for e in range(0, len(best_matches)):
+        if correct[e] == misspell[e] and misspell[e] in best_matches[e]:
+            tp += 1
+        if correct[e] != misspell[e] and misspell[e] not in best_matches[e]:
+            fn += 1
+        if correct[e] == misspell[e] and misspell[e] not in best_matches[e]:
+            tn += 1
+        if correct[e] != misspell[e] and misspell[e] in best_matches[e]:
+            fp += 1
+
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    return precision, recall
 
 
 # Load data
 correct, misspell, dic = data_loading()
 
-# Soundex test
-soundex = pyp.Soundex()
-print(soundex.phonetics('rubert'))
-print(soundex.phonetics('ruportkan'))
-print('----------------------------')
-for element in misspell:
-    print(soundex.phonetics(element))
-print('----------------------------')
+# Start
+best_matches = []
 for i in range(0, len(misspell)):
-    print(soundex.phonetics(misspell[i]))
-print('----------------------------')
-print(soundex.distance('rubert', 'ruportd'))
-
-
-'''
-# If misspell does not exist in dict, apply soundex to find most similar word
-corrected = []
-for element in misspell:
-    if element in dic:
-        corrected.append(element)
+    score = []
+    lis = []
+    if misspell[i] in dic:
+        best_matches.append([misspell[i]])
     else:
-        misspell_soundex = soundex(element)
-        corrected.append(simplified_NS(dict_soundex, misspell_soundex))
+        for d in dic:
+            value = soundex_distance(misspell[i], d)
+            score.append(value)
+        best = min(score)
+        indices = [i for i, val in enumerate(score) if val == best]
+        for j in indices:
+            lis.append(dic[j])
+        best_matches.append(lis)
 
-# Write corrected to a text file
-write_corrected(corrected)
-'''
 
+print(best_matches)
+pred_evaluation = predict_evaluation(correct, best_matches)
+det_evaluation = detect_evaluation(correct, misspell, best_matches)
+eva = []
+eva.append(pred_evaluation)
+eva.append(det_evaluation)
+write_corrected(correct, misspell, best_matches, eva)
+write_corrected_verbose(correct, misspell, best_matches, eva)
 
+print(time.clock())
+
+# print(neighborhood_search('lended', 'commodity'))

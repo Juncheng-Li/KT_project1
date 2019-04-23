@@ -1,4 +1,7 @@
 # KT_project1
 
+weighted-levenshtein for calculating edit distance and neighbourhood search:
 https://weighted-levenshtein.readthedocs.io/en/master/
-https://pypi.org/project/python-Levenshtein/
+
+jellyfish for calculating soundex:
+https://pypi.org/project/jellyfish/

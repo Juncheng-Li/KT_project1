@@ -93,18 +93,14 @@ best_matches = []
 for i in range(0, len(misspell)):
     score = []
     lis = []
-    if misspell[i] in dic:
-        best_matches.append([misspell[i]])
-    else:
-        for d in dic:
-            value = edit_distance(misspell[i], d)
-            score.append(value)
-        best = min(score)
-        indices = [i for i, val in enumerate(score) if val == best]
-        for j in indices:
-            lis.append(dic[j])
-        best_matches.append(lis)
-
+    for d in dic:
+        value = edit_distance(misspell[i], d)
+        score.append(value)
+    best = min(score)
+    indices = [i for i, val in enumerate(score) if val == best]
+    for j in indices:
+        lis.append(dic[j])
+    best_matches.append(lis)
 
 print(best_matches)
 pred_evaluation = predict_evaluation(correct, best_matches)

@@ -47,7 +47,7 @@ def write_corrected_verbose(correct, misspell, temp, evaluation):
 
 
 def split(string, length, step=1):
-    return (string[0+i:length+i] for i in range(0, len(string), step))
+    return (string[0 + i:length + i] for i in range(0, len(string), step))
 
 
 def grams(word, n):
@@ -126,17 +126,14 @@ best_matches = []
 for i in range(0, len(misspell)):
     score = []
     lis = []
-    if misspell[i] in dic:
-        best_matches.append([misspell[i]])
-    else:
-        for d in dic:
-            value = calc(misspell[i], d)
-            score.append(value)
-        best = min(score)
-        indices = [i for i, val in enumerate(score) if val == best]
-        for j in indices:
-            lis.append(dic[j])
-        best_matches.append(lis)
+    for d in dic:
+        value = calc(misspell[i], d)
+        score.append(value)
+    best = min(score)
+    indices = [i for i, val in enumerate(score) if val == best]
+    for j in indices:
+        lis.append(dic[j])
+    best_matches.append(lis)
 
 print(best_matches)
 pred_evaluation = predict_evaluation(correct, best_matches)

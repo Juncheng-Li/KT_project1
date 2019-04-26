@@ -77,11 +77,17 @@ for i in range(0, len(misspell)):
     score = []
     lis = []
     for d in dic:
-        # Calculates Soundex distance for each
+        # Calculates Soundex distance between misspell token
+        # and every word in dictionary to get a list of
+        # distance values
         value = soundex_distance(misspell[i], d)
         score.append(value)
+    # Get the lowest distance among the list
     best = min(score)
+    # Get indices of all the words having lowest distance
     indices = [i for i, val in enumerate(score) if val == best]
+    # Get all the word having the lowest distance
+    # by their index and append them in a list
     for j in indices:
         lis.append(dic[j])
     best_matches.append(lis)

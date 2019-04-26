@@ -1,25 +1,27 @@
 # KT_project1
 
-The project applied three algorithms on the spelling corrction task, including Edit Distance(Leventain Distance), Bigram, and Soundex.
+The project applied three algorithms on the spelling corrction task, including Edit Distance(Levenshtain Distance), Bigram, and Soundex.
 
 Each algorithm is written in a stand-alone python file.
 
 ED.py:
 Predicts the correct word by calculating the Edit distance between token and words in the dictionary.
 
-Splits(string, length, step=1) and grams(word, n): splits words into substrings of n letters, in this project n = 2.
-intersection(lst1, lst2): Counts how many grams in common
-calc(String1, String): Calculates the Bigram score
-
-
-
+edit_distance(word1, word2): Calculates the edit_distance between two words
 
 
 nGram.py:
 Predicts the correct word by splitting the token into substrings of two letters.
 
+Splits(string, length, step=1) and grams(word, n): splits words into substrings of n letters, in this project n = 2.
+intersection(lst1, lst2): Counts how many grams in common
+calc(String1, String): Calculates the Bigram score
+
+
 Soundex.py:
 Converts word into Soundex code first, then apply Edit Distance to calculate the similarity between words.
+
+soundex_distance(word1, word2): Converts words into Soundex code and then calculates the Soundex distance.
 
 
 Each file has following functions:

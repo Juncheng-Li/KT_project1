@@ -17,18 +17,8 @@ def data_loading():
     return f1, f2, f3
 
 
-def write_corrected(correct, misspell, temp, evaluation):
-    f = open("./data/nGram.txt", "w+")
-    for a in range(0, len(temp)):
-        temp_list = temp[a]
-        for c in temp_list:
-            f.write(c.rstrip() + ' ')
-        f.write('\n')
-    f.close()
-
-
 def write_corrected_verbose(correct, misspell, temp, evaluation):
-    f = open("./data/nGram_verbose.txt", "w+")
+    f = open("./data/Bigram_verbose.txt", "w+")
     for a in range(0, len(temp)):
         f.write(misspell[a].rstrip() + ', ')
         f.write(correct[a].rstrip() + ' ->[ ')
@@ -36,9 +26,8 @@ def write_corrected_verbose(correct, misspell, temp, evaluation):
         for c in temp_list:
             f.write(c.rstrip() + ' ')
         f.write(']\n')
-    f.write('Predict p and r, Detection p and r: ')
-    f.write(str(evaluation[0]) + ' ')
-    f.write(str(evaluation[1]))
+    f.write("\n" + "Precision: " + str(evaluation[0]) + "\n")
+    f.write("Recall: " + str(evaluation[1]))
     f.close()
 
 
@@ -122,9 +111,8 @@ pred_evaluation = predict_evaluation(correct, best_matches)
 print("Precision: " + str(pred_evaluation[0]))
 print("Recall: " + str(pred_evaluation[1]))
 
-# Write results to files
-write_corrected(correct, misspell, best_matches, pred_evaluation)
+# Write results into files
 write_corrected_verbose(correct, misspell, best_matches, pred_evaluation)
 
 # Prints total processing time of the program
-print(time.clock())
+print("Time cost: " + str(time.clock()) + "s")
